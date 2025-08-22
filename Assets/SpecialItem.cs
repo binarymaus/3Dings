@@ -19,6 +19,11 @@ public class SpecialItem : Bubble
         yield return new WaitForSeconds(0f);
     }
 
+    void OnMouseDown()
+    {
+        StartCoroutine(ActivateItem());
+    }
+
     internal void InitializeItem(int x, int y)
     {
         _game = FindAnyObjectByType<Game>();
@@ -26,4 +31,13 @@ public class SpecialItem : Bubble
         X = x;
         Y = y;
     }
+}
+
+public enum SpecialItemType
+{
+    Bomb,
+    Destroyer,
+    // ColorChanger,
+    // RowClearer,
+    // ColumnClearer
 }

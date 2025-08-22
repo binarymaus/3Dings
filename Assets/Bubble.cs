@@ -16,11 +16,15 @@ public class Bubble : MonoBehaviour
         _game = FindAnyObjectByType<Game>();
     }
 
+    #if UNITY_EDITOR || UNITY_STANDALONE
+
     void OnMouseUp()
     {
         Debug.Log("Bubble clicked!");
         OnBubbleClicked?.Invoke(this);
     }
+
+#endif
 
     public virtual void Update()
     {

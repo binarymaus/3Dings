@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8490135737937320440}
   - component: {fileID: 7897846414090732128}
   - component: {fileID: 6679008351888386313}
+  - component: {fileID: 3305714319483925704}
   m_Layer: 0
   m_Name: Destroyer
   m_TagString: Untagged
@@ -103,3 +104,39 @@ MonoBehaviour:
   Color: {r: 0, g: 0, b: 0, a: 0}
   X: 0
   Y: 0
+--- !u!58 &3305714319483925704
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5410667235020786656}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 4.7850003
