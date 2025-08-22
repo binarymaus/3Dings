@@ -170,26 +170,26 @@ public class Game : MonoBehaviour
         return bubbles;
     }
 
-    private IEnumerator DestroyMatchedBubbles(List<Bubble> bubbles)
+    private void DestroyMatchedBubbles(List<Bubble> bubbles)
     {
         // Clear matched bubbles from the matrix
         foreach (var bubble in bubbles)
         {
+            if(bubble == null) continue;
             var color = bubble.GetComponent<SpriteRenderer>().color;
             bubble.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 0.5f); // Fade out the bubble
-            yield return new WaitForSeconds(0.1f); // Wait for a moment before destroying
             _matrix[bubble.X, bubble.Y] = null;
         }
-        if (bubbles.Count == 0) yield break;
+        if (bubbles.Count == 0) return;
         foreach (var bubble in bubbles.Where(b => b != null))
         {
             DestroyImmediate(bubble.gameObject);
         }
 
-        StartCoroutine(DropBubbles());
+        DropBubbles();
     }
 
-    private IEnumerator DropBubbles()
+    private void DropBubbles()
     {
         for (int x = 0; x < GridSize; x++)
         {
@@ -203,6 +203,10 @@ public class Game : MonoBehaviour
                     {
                         var bubbleAbove = _matrix[x, newY];
                         if (bubbleAbove == null) continue;
+                        if(bubbleAbove is Bomb bomb)
+                        {
+                            Debug.Log($"Bomb found at ({bubbleAbove.X}, {bubbleAbove.Y}), activating.");
+                        }
                         Debug.Log($"Bubble above: {bubbleAbove.X},{bubbleAbove.Y} ({bubbleAbove.Color})");
                         Debug.Log($"Moving bubble from ({bubbleAbove.X}, {bubbleAbove.Y}) to ({x}, {y})");
                         _matrix[bubbleAbove.X, bubbleAbove.Y] = null; // Clear the old position
@@ -210,13 +214,11 @@ public class Game : MonoBehaviour
                         bubbleAbove.X = x; // Update the X position
                         bubbleAbove.Y = y; // Update the Y position
                         bubbleAbove.AnimateMove(x, y);
-                        yield return new WaitForSeconds(0.1f); // Wait for a moment before destroying
                         break; // Stop after the first bubble found
                     }
                 }
             }
         }
-        yield return new WaitForSeconds(0.5f);
         Cleanup();
     }
 
@@ -237,7 +239,7 @@ public class Game : MonoBehaviour
                     bubble.Initialize(x, 0, _colors[Random.Range(0, _colors.Length)], BubbleClicked);
                     _matrix[x, y] = bubble;
                     bubble.AnimateMove(x, y);
-                    yield return new WaitForSeconds(0.5f);
+                    yield return new WaitForSeconds(0.2f);
                     bubble.Y = y; // Update the Y position
                 }
             }
@@ -249,7 +251,6 @@ public class Game : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(2f);
             foreach (var specialItem in SpecialItems)
             {
                 StartCoroutine(specialItem.ActivateItem());
@@ -284,10 +285,11 @@ public class Game : MonoBehaviour
         if (bubbles.Count > 0)
         {
             Debug.Log("Initial match found, destroying bubbles.");
-            StartCoroutine(DestroyMatchedBubbles(bubbles.Distinct().ToList()));
+            DestroyMatchedBubbles(bubbles.Distinct().ToList());
             if (bubbles.Count > 3)
             {
                 SpawnSpecialItem(bubbles[0].X, bubbles[0].Y);
+                return;
             }
         }
         else
@@ -303,13 +305,16 @@ public class Game : MonoBehaviour
         var randomIndex = Random.Range(0, SpecialItemPrefabs.Length);
         var instance = Instantiate(SpecialItemPrefabs[randomIndex]);
         var specialItem = instance.GetComponent<SpecialItem>();
-        specialItem.Initialize(x, y);
+        DestroyImmediate(_matrix[x, y]?.gameObject); // Destroy the bubble at the position
+        _matrix[x, y] = specialItem;
+        specialItem.InitializeItem(x, y);
         SpecialItems.Add(specialItem);
+        DropBubbles();
     }
 
     internal void DestroyBubbles(Vector2Int[] positions)
     {
         var bubbles = positions.Select(position => _matrix[position.x, position.y]).Where(bubble => bubble != null).ToList();
-        StartCoroutine(DestroyMatchedBubbles(bubbles.Distinct().ToList()));
+        DestroyMatchedBubbles(bubbles.Distinct().ToList());
     }
 }

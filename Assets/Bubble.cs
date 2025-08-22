@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 public class Bubble : MonoBehaviour
@@ -9,8 +8,8 @@ public class Bubble : MonoBehaviour
     public int X;
     public int Y;
     private Action<Bubble> OnBubbleClicked;
-    private (float x, float y)? moveTarget = null;
-    private Game _game;
+    protected (int x, int y)? moveTarget = null;
+    protected Game _game;
 
     void Awake()
     {
@@ -23,19 +22,21 @@ public class Bubble : MonoBehaviour
         OnBubbleClicked?.Invoke(this);
     }
 
-    void Update()
+    public virtual void Update()
     {
         if (moveTarget != null)
         {
             transform.position = Vector3.Lerp(transform.position, new Vector3(moveTarget.Value.x * _game.Padding, -moveTarget.Value.y * _game.Padding, 0) + _game.Offset, Time.deltaTime * 5f);
             if (Vector3.Distance(transform.position, new Vector3(moveTarget.Value.x * _game.Padding, -moveTarget.Value.y * _game.Padding, 0) + _game.Offset) < 0.01f)
             {
+                X = moveTarget.Value.x;
+                Y = moveTarget.Value.y;
                 moveTarget = null; // Reset move target when close enough
             }
         }
     }
 
-    public void AnimateMove(float x, float y)
+    public virtual void AnimateMove(int x, int y)
     {
         moveTarget = (x, y);
     }

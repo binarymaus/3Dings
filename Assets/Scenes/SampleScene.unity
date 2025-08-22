@@ -461,6 +461,7 @@ MonoBehaviour:
   Padding: 0.45
   BubblePrefab: {fileID: 8671636354771213968, guid: 8f53ed0c6a15cc444abbab3b5a7a28ff, type: 3}
   SpecialItemPrefabs:
+  - {fileID: 5410667235020786656, guid: e1a0772ea80a25c4b9786db10ac88c7b, type: 3}
   - {fileID: 5651484107768044936, guid: ccb16fc60b765e245a6e098009b12373, type: 3}
 --- !u!4 &2066061608
 Transform:

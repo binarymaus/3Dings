@@ -1,9 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class SpecialItem : MonoBehaviour
+public class SpecialItem : Bubble
 {
-    protected Game _game;
+    public override void Update()
+    {
+        base.Update();
+    }
 
     protected Vector2Int Position;
 
@@ -16,10 +19,11 @@ public class SpecialItem : MonoBehaviour
         yield return new WaitForSeconds(0f);
     }
 
-    internal void Initialize(int x, int y)
+    internal void InitializeItem(int x, int y)
     {
         _game = FindAnyObjectByType<Game>();
         transform.position = new Vector3(x * _game.Padding, -y * _game.Padding, -0.1f) + _game.Offset;
-        Position = new Vector2Int(x, y);
+        X = x;
+        Y = y;
     }
 }
