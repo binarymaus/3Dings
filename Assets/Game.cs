@@ -47,6 +47,7 @@ public class Game : MonoBehaviour
         _matrix = new Bubble[GridSize, GridSize];
         GridSize = loader.levelData.gridSize.x; // Assuming square grid
         var colorMatrix = loader.levelData.colorMatrix;
+        Debug.Log($"Loaded level with grid size: {GridSize} and color matrix count: {colorMatrix.Count}");
         for (int x = 0; x < colorMatrix.Count; x++)
         {
             for (int y = 0; y < colorMatrix[x].Count; y++)
