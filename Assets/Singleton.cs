@@ -1,16 +1,13 @@
 using UnityEngine;
 
-public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+public class Singleton<T> : MonoBehaviour
+    where T : Component
 {
     private static T _instance;
-
-    public static T Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                var objs = FindObjectsOfType<T>();
+    public static T Instance {
+        get {
+            if (_instance == null) {
+                var objs = FindObjectsByType<T>(FindObjectsSortMode.None);
                 if (objs.Length > 0)
                 {
                     _instance = objs[0];
@@ -22,9 +19,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 if (_instance == null)
                 {
                     GameObject obj = new GameObject();
-                    _instance = obj.AddComponent<T>();
                     obj.hideFlags = HideFlags.HideAndDontSave;
                     _instance = obj.AddComponent<T>();
+                    
                 }
             }
             return _instance;

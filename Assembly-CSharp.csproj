@@ -72,10 +72,10 @@
     <Compile Include="Assets\BubbleInputActions.cs" />
     <Compile Include="Assets\InputManager.cs" />
     <Compile Include="Assets\SwipeDetection.cs" />
+    <Compile Include="Assets\SwipeArrowDrawer.cs" />
     <Compile Include="Assets\Destroyer.cs" />
     <Compile Include="Assets\LevelLoader.cs" />
     <Compile Include="Assets\Game.cs" />
-    <Compile Include="Assets\InputManagerTest.cs" />
     <Compile Include="Assets\Bomb.cs" />
   </ItemGroup>
   <ItemGroup>
