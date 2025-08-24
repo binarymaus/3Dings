@@ -16,15 +16,15 @@ public class Bubble : MonoBehaviour
         _game = FindAnyObjectByType<Game>();
     }
 
-    #if UNITY_EDITOR || UNITY_STANDALONE
-
-    void OnMouseUp()
+    public virtual void OnTap()
     {
-        Debug.Log("Bubble clicked!");
-        OnBubbleClicked?.Invoke(this);
+        Debug.Log($"Bubble tapped at ({X},{Y}) with color {Color}");
     }
 
-#endif
+    public virtual void OnSwipe(Vector2 direction)
+    {
+        Debug.Log($"Bubble swiped in direction {direction} at ({X},{Y}) with color {Color}");
+    }
 
     public virtual void Update()
     {
