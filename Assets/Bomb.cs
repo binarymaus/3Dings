@@ -22,9 +22,8 @@ public class Bomb : SpecialItem
         _game.DestroyBubbles(positions.ToArray());
     }
 
-    public override void AnimateMove(int x, int y)
+    public override void OnSwap(SwipeDirection direction)
     {
-        base.AnimateMove(x, y);
-        // Additional bomb-specific update logic can go here
+        StartCoroutine(ActivateItem());
     }
 }

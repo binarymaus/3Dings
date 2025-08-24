@@ -12,8 +12,13 @@ public class Destroyer : SpecialItem
             positions.Add(new Vector2Int(i, Y));
             positions.Add(new Vector2Int(X, i));
         }
-        // Bomb explosion behavior
+        // Destroyer explosion behavior
         yield return new WaitForSeconds(2f);
         _game.DestroyBubbles(positions.ToArray());
+    }
+
+    public override void OnSwap(SwipeDirection direction)
+    {
+        StartCoroutine(ActivateItem());
     }
 }

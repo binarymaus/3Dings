@@ -19,16 +19,6 @@ public class SpecialItem : Bubble
         yield return new WaitForSeconds(0f);
     }
 
-    public override void OnTap()
-    {
-        Debug.Log($"SpecialItem tapped at ({X},{Y})");
-    }
-
-    public override void OnSwipe(Vector2 direction)
-    {
-        Debug.Log($"SpecialItem swiped in direction {direction} at ({X},{Y})");
-    }
-
     internal void InitializeItem(int x, int y)
     {
         _game = FindAnyObjectByType<Game>();

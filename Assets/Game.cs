@@ -59,7 +59,7 @@ public class Game : MonoBehaviour
                 var bubble = instance.GetComponent<Bubble>();
                 // random colors are green, yellow, red, cyan, blue
                 var color = colorMatrix[x][y].ToColor();
-                bubble.Initialize(x, y, color, BubbleClicked);
+                bubble.Initialize(x, y, color);
                 _matrix[x, y] = bubble;
             }
         }
@@ -80,111 +80,6 @@ public class Game : MonoBehaviour
             }
             _lastOffset = Offset;
             _lastPadding = Padding;
-        }
-        #if !(UNITY_EDITOR || UNITY_STANDALONE)
-        // Use touch input on mobile
-        if (Input.touchCount == 1)
-        {
-            if(m_IsSwiping)
-            {
-                Vector2 diff = Input.GetTouch(0).position - m_StartingTouch;
-
-                // Put difference in Screen ratio, but using only width, so the ratio is the same on both
-                // axes (otherwise we would have to swipe more vertically...)
-                diff = new Vector2(diff.x/Screen.width, diff.y/Screen.width);
-
-                if(diff.magnitude > 0.01f) //we set the swip distance to trigger movement to 1% of the screen width
-                {
-                    if(Mathf.Abs(diff.y) > Mathf.Abs(diff.x))
-                    {
-                        if(diff.y < 0)
-						{
-							// Down
-                            // Get Bubble using raycast
-                            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position), Vector2.down);
-                            if (hit.collider != null)
-                            {
-                                Bubble bubble = hit.collider.GetComponent<Bubble>();
-                                if (bubble != null)
-                                {
-                                    BubbleSwiped(bubble, Vector2.down);
-                                }
-                            }
-						}
-						else
-						{
-							// Up
-						}
-                    }
-                    else
-                    {
-                        if(diff.x < 0)
-                        {
-                            // Left
-                        }
-                        else
-                        {
-                            // Right
-                        }
-                    }
-                        
-                    m_IsSwiping = false;
-                }
-            }
-
-            // Input check is AFTER the swip test, that way if TouchPhase.Ended happen a single frame after the Began Phase
-            // a swipe can still be registered (otherwise, m_IsSwiping will be set to false and the test wouldn't happen for that began-Ended pair)
-            if(Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                m_StartingTouch = Input.GetTouch(0).position;
-                m_IsSwiping = true;
-                Debug.Log("Start swipe");
-            }
-            else if(Input.GetTouch(0).phase == TouchPhase.Ended)
-            {
-                m_IsSwiping = false;
-                Debug.Log("End swipe");
-            }
-        }
-        foreach (Touch touch in Input.touches)
-        {
-            if (touch.phase == TouchPhase.Began)
-            {
-                // Construct a ray from the current touch coordinates
-                Ray ray = Camera.main.ScreenPointToRay(touch.position);
-                if (Physics.Raycast(ray, out RaycastHit rayHit))
-                {
-                    if (rayHit.collider.gameObject.layer == LAYER_BUBBLE && rayHit.collider.TryGetComponent<Bubble>(out var bubble))
-                    {
-                        Debug.Log("Bubble clicked");
-                        BubbleClicked(bubble);
-                    }
-                }
-            }
-        }
-        #endif
-    }
-
-    private void BubbleSwiped(Bubble bubble, Vector2 direction)
-    {
-        // Handle bubble swipe logic
-    }
-
-    private void BubbleClicked(Bubble bubble)
-    {
-        if (SelectedBubble != null)
-        {
-            if (Distance(SelectedBubble, bubble) > 1)
-            {
-                Debug.Log("Bubbles are too far apart to swap.");
-                SelectedBubble = null; // Deselect if too far
-                return;
-            }
-            SwapWith(bubble);
-        }
-        else
-        {
-            SelectedBubble = bubble;
         }
     }
 
@@ -397,7 +292,7 @@ public class Game : MonoBehaviour
                     Debug.Log($"Filling empty space at ({x}, {y})");
                     var instance = Instantiate(BubblePrefab);
                     var bubble = instance.GetComponent<Bubble>();
-                    bubble.Initialize(x, 0, Colors[Random.Range(0, Colors.Length)], BubbleClicked);
+                    bubble.Initialize(x, 0, Colors[Random.Range(0, Colors.Length)]);
                     _matrix[x, y] = bubble;
                     bubble.AnimateMove(x, y);
                     yield return new WaitForSeconds(0.2f);
@@ -412,13 +307,17 @@ public class Game : MonoBehaviour
         }
     }
 
-    private void SwapWith(Bubble targetBubble)
+    private void SwapWith(Bubble targetBubble, SwipeDirection swipeDirection)
     {
         Debug.Log($"Swapping bubbles at ({targetBubble.X}, {targetBubble.Y}) and ({SelectedBubble.X}, {SelectedBubble.Y})");
-        AnimateSwap(SelectedBubble, targetBubble);
+        if (AnimateSwap(SelectedBubble, targetBubble))
+        {
+            SelectedBubble.OnSwap(swipeDirection);
+            targetBubble.OnSwap(swipeDirection);
+        }
     }
 
-    private void AnimateSwap(Bubble bubbleA, Bubble bubbleB)
+    private bool AnimateSwap(Bubble bubbleA, Bubble bubbleB)
     {
         bubbleA.AnimateMove(bubbleB.X, bubbleB.Y);
         bubbleB.AnimateMove(bubbleA.X, bubbleA.Y);
@@ -432,9 +331,10 @@ public class Game : MonoBehaviour
         if (!match)
         {
             StartCoroutine(UndoSwap(bubbleA, bubbleB));
-            return;
+            return false;
         }
         Cleanup();
+        return true;
     }
 
     private IEnumerator UndoSwap(Bubble bubbleA, Bubble bubbleB)
@@ -490,5 +390,25 @@ public class Game : MonoBehaviour
         {
             StartCoroutine(FillEmptySpaces());
         }));
+    }
+
+    internal void BubbleSwiped(Bubble firstBubble, SwipeDirection swipeDirection)
+    {
+        var secondBubble = swipeDirection switch
+        {
+            SwipeDirection.Up => firstBubble.Y - 1 <= 0 ? null : _matrix[firstBubble.X, firstBubble.Y - 1],
+            SwipeDirection.Down => firstBubble.Y + 1 >= _matrix.GetLength(1) ? null : _matrix[firstBubble.X, firstBubble.Y + 1],
+            SwipeDirection.Left => firstBubble.X - 1 < 0 ? null : _matrix[firstBubble.X - 1, firstBubble.Y],
+            SwipeDirection.Right => firstBubble.X + 1 >= _matrix.GetLength(0) ? null : _matrix[firstBubble.X + 1, firstBubble.Y],
+            _ => throw new System.ArgumentOutOfRangeException(nameof(swipeDirection), swipeDirection, null)
+        };
+        if (secondBubble == null)
+        {
+            Debug.Log("No bubble to swap with in that direction.");
+            return;
+        }
+        if (secondBubble == null) return;
+        SelectedBubble = firstBubble;
+        SwapWith(secondBubble, swipeDirection);
     }
 }

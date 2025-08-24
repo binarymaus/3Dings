@@ -12,6 +12,7 @@ public class InputManager : Singleton<InputManager>
     #endregion
     private BubbleInputActions playerControls;
     private Camera mainCamera;
+    private bool inputDisabled;
 
     void Awake()
     {
@@ -37,6 +38,8 @@ public class InputManager : Singleton<InputManager>
 
     private void StartTouchPrimary(InputAction.CallbackContext context)
     {
+        if (inputDisabled) return;
+
         if (OnStartTouch != null) OnStartTouch(Utils.ScreenToWorld(mainCamera, playerControls.Touch.PrimaryPosition.ReadValue<Vector2>()), (float)context.startTime);
     }
 
@@ -48,5 +51,15 @@ public class InputManager : Singleton<InputManager>
     public Vector2 PrimaryPosition()
     {
         return Utils.ScreenToWorld(mainCamera, playerControls.Touch.PrimaryPosition.ReadValue<Vector2>());
+    }
+
+    internal void DisableInput()
+    {
+        inputDisabled = true;
+    }
+
+    internal void EnableInput()
+    {
+        inputDisabled = false;
     }
 }

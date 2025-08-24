@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Bubble : MonoBehaviour
 {
     public Color Color;
 
     public int X;
     public int Y;
-    private Action<Bubble> OnBubbleClicked;
     protected (int x, int y)? moveTarget = null;
     protected Game _game;
 
@@ -16,14 +16,9 @@ public class Bubble : MonoBehaviour
         _game = FindAnyObjectByType<Game>();
     }
 
-    public virtual void OnTap()
+    public virtual void OnSwap(SwipeDirection direction)
     {
-        Debug.Log($"Bubble tapped at ({X},{Y}) with color {Color}");
-    }
-
-    public virtual void OnSwipe(Vector2 direction)
-    {
-        Debug.Log($"Bubble swiped in direction {direction} at ({X},{Y}) with color {Color}");
+        Debug.Log($"Bubble swapped in direction {direction} at ({X},{Y})");
     }
 
     public virtual void Update()
@@ -45,14 +40,13 @@ public class Bubble : MonoBehaviour
         moveTarget = (x, y);
     }
 
-    internal void Initialize(int x, int y,  Color color, Action<Bubble> onBubbleClicked)
+    internal void Initialize(int x, int y,  Color color)
     {
         transform.position = new Vector3(x * _game.Padding, -y * _game.Padding, 0) + _game.Offset;
         Color = color;
         X = x;
         Y = y;
 
-        OnBubbleClicked = onBubbleClicked;
         GetComponent<SpriteRenderer>().color = Color;
     }
 }

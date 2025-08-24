@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "192.168.178.66:37225",
+    "m_SelectedDeviceId": "192.168.178.66:41841",
     "m_SelectedProcess": {
-        "deviceId": "192.168.178.66:37225",
+        "deviceId": "192.168.178.66:41841",
         "name": "com.maus.games.threedings",
-        "processId": 31724,
+        "processId": 9220,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -114,6 +114,24 @@
             "deviceId": "192.168.178.66:37225",
             "name": "com.maus.games.threedings",
             "processId": 31724,
+            "exited": false
+        },
+        {
+            "deviceId": "192.168.178.66:41841",
+            "name": "com.maus.games.threedings",
+            "processId": 10029,
+            "exited": false
+        },
+        {
+            "deviceId": "192.168.178.66:41841",
+            "name": "com.maus.games.threedings",
+            "processId": 13899,
+            "exited": false
+        },
+        {
+            "deviceId": "192.168.178.66:41841",
+            "name": "com.maus.games.threedings",
+            "processId": 9220,
             "exited": false
         }
     ],

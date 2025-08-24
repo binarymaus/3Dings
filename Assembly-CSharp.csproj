@@ -76,6 +76,7 @@
     <Compile Include="Assets\Destroyer.cs" />
     <Compile Include="Assets\LevelLoader.cs" />
     <Compile Include="Assets\Game.cs" />
+    <Compile Include="Assets\InputManagerTest.cs" />
     <Compile Include="Assets\Bomb.cs" />
   </ItemGroup>
   <ItemGroup>
