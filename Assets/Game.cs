@@ -9,8 +9,8 @@ using UnityEngine;
 public class Game : MonoBehaviour
 {
     public int GridSize = 8;
-    public Vector3 Offset = new(-1.8f, 1.5f, 0);
-    public float Padding = 0.5f;
+    public Vector3 Offset = new(-1.63f,1.72f,0f);
+    public float Padding = 0.45f;
     private Vector3 _lastOffset;
     private float _lastPadding;
     private Bubble[,] _matrix;
@@ -18,6 +18,9 @@ public class Game : MonoBehaviour
     private Bubble SelectedBubble;
 
     public GameObject[] SpecialItemPrefabs;
+
+    private const int LAYER_BUBBLE = 6;
+    private const int LAYER_SPECIAL_ITEM = 7;
 
     private List<SpecialItem> SpecialItems = new();
 
@@ -135,10 +138,28 @@ public class Game : MonoBehaviour
             {
                 m_StartingTouch = Input.GetTouch(0).position;
                 m_IsSwiping = true;
+                Debug.Log("Start swipe");
             }
             else if(Input.GetTouch(0).phase == TouchPhase.Ended)
             {
                 m_IsSwiping = false;
+                Debug.Log("End swipe");
+            }
+        }
+        foreach (Touch touch in Input.touches)
+        {
+            if (touch.phase == TouchPhase.Began)
+            {
+                // Construct a ray from the current touch coordinates
+                Ray ray = Camera.main.ScreenPointToRay(touch.position);
+                if (Physics.Raycast(ray, out RaycastHit rayHit))
+                {
+                    if (rayHit.collider.gameObject.layer == LAYER_BUBBLE && rayHit.collider.TryGetComponent<Bubble>(out var bubble))
+                    {
+                        Debug.Log("Bubble clicked");
+                        BubbleClicked(bubble);
+                    }
+                }
             }
         }
         #endif

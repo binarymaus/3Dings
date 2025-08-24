@@ -27,7 +27,7 @@ public class SpecialItem : Bubble
     internal void InitializeItem(int x, int y)
     {
         _game = FindAnyObjectByType<Game>();
-        transform.position = new Vector3(x * _game.Padding, -y * _game.Padding, -0.1f) + _game.Offset;
+        transform.position = new Vector3(x * _game.Padding, -y * _game.Padding, 0f) + _game.Offset;
         X = x;
         Y = y;
     }
